@@ -2,13 +2,13 @@ package assignment1;
 
 /**
  *
- * @author Mohamed Anwar 20/2/2020
  * Class Account where Client's balance and number of his account are constructed
  */
 public class Account {
 
     private double balance;
     private int accountNumber;
+    public String Speciality;
 
     public Account(double inBalance, int inAccount) {
         this.balance = inBalance;
@@ -38,6 +38,7 @@ public class Account {
  *
  * Withdraw function to allow user to withdraw from his initialed balance
  * @param amount
+     * @return 
  */
     public double withdraw(double amount) {
 
@@ -55,6 +56,7 @@ public class Account {
  *
  * Deposit function to allow user to deposit from his initialed balance
  * @param amount
+     * @return 
  */
     public double deposit(double amount) {
         balance += amount;
