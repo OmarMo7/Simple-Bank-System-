@@ -25,6 +25,7 @@ public class Client {
     }
 /**
 * Setters and Getters for attributes are constructed
+     * @param amount
 */
     public void setName(String amount) {
         name = amount;
