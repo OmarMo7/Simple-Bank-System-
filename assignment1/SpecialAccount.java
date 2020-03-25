@@ -7,12 +7,13 @@ package assignment1;
 public class SpecialAccount extends Account {
     //Empty Parametrized
     SpecialAccount(double inBalance ,int inAccount){
-        super(inBalance ,inAccount); 
+        super(inBalance ,inAccount);
     }
 
     /**
      *
      * @param amount
+     * @return 
      */
     @Override
     public double withdraw(double amount){
@@ -40,9 +41,10 @@ public class SpecialAccount extends Account {
             System.out.println("Operation successful");                
             System.out.println("Your Balance: " + getBalance());
         }
-        else {System.out.println("Cannot overdraft this amount.");};
+        else {
+            System.out.println("Cannot overdraft this amount.");
+        }
         return getBalance();
-        
     }
     
 }
