@@ -1,6 +1,5 @@
 /*
- * This program is constructed, tested and compiled by 
- * Omar Mostafa 
+ *
  */
 package assignment1;
 
