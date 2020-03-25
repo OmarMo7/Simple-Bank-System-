@@ -7,7 +7,7 @@ import java.util.Scanner;
  * @author Mohamed Metwally 21/2/2020
  * @author Mohamed Anwar 21/2/2020
  */
-public class Main extends Bank {
+public class MainMenu extends Bank {
     Scanner input = new Scanner(System.in);
     Bank myBank = new Bank();
     boolean existance = false;
@@ -19,7 +19,7 @@ public class Main extends Bank {
 //    double SpecBalance = 0;
 //    double norbalance = 0;
 //    double Cbalance = 0;
-    Main() {};
+    MainMenu() {};
 /**
  *DisplayMenu displays the available options for user to choose
  */
