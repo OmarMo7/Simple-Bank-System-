@@ -1,6 +1,5 @@
 package assignment1;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 /**
  * 
@@ -9,15 +8,18 @@ import java.util.Scanner;
  * @author Mohamed Anwar 21/2/2020
  */
 public class Main extends Bank {
-     public ArrayList<Double> balancess = new ArrayList<>();
     Scanner input = new Scanner(System.in);
     Bank myBank = new Bank();
+    boolean existance = false;
     double balance = 0;
     double UserAnswer5;
+    int UserAnswerInt;
+    int UserAnswerInt2;
+    
 //    double SpecBalance = 0;
 //    double norbalance = 0;
 //    double Cbalance = 0;
-    Main() {}
+    Main() {};
 /**
  *DisplayMenu displays the available options for user to choose
  */
@@ -26,11 +28,10 @@ public class Main extends Bank {
         System.out.println("Choose the option you want: ");
         System.out.println("1- Add new normal client account with normal account");
         System.out.println("2- Add new normal client account with special account");
-        System.out.println("3- Add new commercial client account with normal account ");
-        System.out.println("4- Add new commercial client account with special account");
-        System.out.println("5- Display accounts' details");
-        System.out.println("6- Display specifec account details");
-        System.out.println("7- Exit");
+        System.out.println("3- Make Transactios");
+        System.out.println("4- Display accounts' details");
+        System.out.println("5- Display specifec account details");
+        System.out.println("6- Exit");
 
         String UserAnswer = input.next();
         
@@ -52,9 +53,11 @@ public class Main extends Bank {
                 validatePositiveNumber();
                 counter+=1;
                 Account normalAcc = new Account(balance, counter);
+                normalAcc.Speciality = "false";
                 Client normalClient = new Client(normalName, nationalID, normalAddress, normalPhone, normalAcc);
-                myBank.addClient(normalAcc, normalClient, balance);
-                displayTrans(balance, counter);
+                myBank.addClient(normalAcc, normalClient, balance, normalAcc.Speciality);
+                //displayTrans(balance, counter);
+                displayMenu();
                 break;
 /**
  * Normal client with a special account is added
@@ -71,70 +74,54 @@ public class Main extends Bank {
                 System.out.println("Enter your account's balance: ");
                 validatePositiveNumber();
                 counter+=1;
-                SpecialAccount normalSpecAcc = new SpecialAccount(balance, counter);
-                Client normalcomClient = new Client(normalSpecName, nationalSpecID, normalSpecAddress, normalSpecPhone, normalSpecAcc);
-                myBank.addClient(normalSpecAcc, normalcomClient, balance);
-                displayTrans(balance, counter);
+                SpecialAccount acc = new SpecialAccount(balance, counter);
+                acc.Speciality = "true";
+                Client normalcomClient = new Client(normalSpecName, nationalSpecID, normalSpecAddress, normalSpecPhone, acc);
+                myBank.addClient(acc, normalcomClient, balance,acc.Speciality);
+                //displayTransNorm(balance, counter);
+                displayMenu();
                 break;
-/**
- * Commercial client with a normal account is added
- */
-            case "3":
-                System.out.println("Enter you Client's name: ");
-                String CnorName = input.next();
-                System.out.println("Enter you Client's commercialID: ");
-                String commercialnorID = input.next();
-                System.out.println("Enter you Client's address: ");
-                String CnorAddress = input.next();
-                System.out.println("Enter you Client's phone: ");
-                String CnorPhone = input.next();
-                System.out.println("Enter your account's balance: ");
-                validatePositiveNumber();
-                counter+=1;
-                Account normalnorAcc = new Account(balance, counter);
-                Client normalnorClient = new Client(CnorName, commercialnorID, CnorAddress, CnorPhone, normalnorAcc);
-                myBank.addClient(normalnorAcc, normalnorClient, balance);
-                displayTrans(balance, counter);
-                break;
-/**
- * Commercial client with a commercial account is added
- */
-            case "4":
-                System.out.println("Enter you Client's name: ");
-                String CName = input.next();
-                System.out.println("Enter you Client's commercialID: ");
-                String commercialID = input.next();
-                System.out.println("Enter you Client's address: ");
-                String CAddress = input.next();
-                System.out.println("Enter you Client's phone: ");
-                String CPhone = input.next();
-                System.out.println("Enter your account's balance: ");
-                validatePositiveNumber();
-                counter+=1;
-                SpecialAccount specialAcc = new SpecialAccount(balance, counter);
-                Client coclient = new CommercialClient(CName, commercialID, CAddress, CPhone, specialAcc);
-                myBank.addClient(specialAcc, coclient, balance);
-                displayTrans(balance, counter);
-                break;
+
+            
 /**
  * Display all accounts
  */
-            case "5":
+            case "3":
+                validateIntAnswer();
+                if (UserAnswerInt > myBank.counters.size()){
+                do{
+                    System.out.println("Your entered account number does not exist! ");
+                    System.out.println("Please try another valid one: ");
+                    validateIntAnswer();
+                } while(UserAnswerInt > myBank.counters.size());
+                }
+                existance = true;
+                balance = myBank.balances.get(UserAnswerInt-1);
+                
+                if (myBank.specs.get(UserAnswerInt-1).equals("false")){
+                    displayTransNorm(balance,UserAnswerInt);
+                }
+                else if (myBank.specs.get(UserAnswerInt-1).equals("true")){
+                    displayTrans(balance,UserAnswerInt);
+                }
+                break;
+            case "4":
                 myBank.display();
                 displayMenu();
                 break;
 /**
  * Display a specific account
  */
-            case "6":
+            case "5":
                 System.out.println("Enter client's account number: ");
                 int number = input.nextInt();
                 myBank.displayClient(number);
+                displayMenu();
                 break;
 /**
  * Exit
  */
-            case "7":
+            case "6":
                 System.out.println("Thank You!");
                 break;
 /**
@@ -154,6 +141,8 @@ public class Main extends Bank {
  */
     public void displayTrans(double Cbalance, int CaccountNumber) {
         SpecialAccount specialAcc = new SpecialAccount(Cbalance, CaccountNumber);
+      if(existance){
+        
         System.out.println("Which transactions do you want to make: ");
         System.out.println("1- [Deposit]");
         System.out.println("2- [Withdraw]");
@@ -188,7 +177,50 @@ public class Main extends Bank {
         }
         displayMenu();
     }
-
+      else {validateIntAnswer();}
+    }
+    
+    public void displayTransNorm(double Cbalance, int CaccountNumber) {
+        Account acc = new Account(Cbalance, CaccountNumber);
+      if(existance){
+        
+        System.out.println("Which transactions do you want to make: ");
+        System.out.println("1- [Deposit]");
+        System.out.println("2- [Withdraw]");
+        System.out.println("3- [Exit]");
+        String UserAnswer3 = input.next();
+        
+        switch (UserAnswer3) {
+            case "1":
+                {
+                    System.out.println("Enter a positive amount: ");
+                    validateDeposit();
+                    balance = acc.deposit(UserAnswer5);
+                    myBank.balances.add(CaccountNumber-1,balance);
+                    break;
+                }
+            case "2":
+                {
+                    System.out.println("Enter amount: ");
+                    validateWithdraw();
+                    balance = acc.withdraw(UserAnswer5);
+                    myBank.balances.add(CaccountNumber-1,balance);
+                    break;
+                }
+            case "3":
+                System.out.println("Thank You");
+                displayMenu();
+                break;
+            default:
+                System.out.println("Invalid Input");
+                displayTransNorm(Cbalance, CaccountNumber);
+                break;
+        }
+        displayMenu();
+    }
+      else {validateIntAnswer();}
+    }
+    
     private void validatePositiveNumber() {
         //Scanner scanner = new Scanner(System.in);
 
@@ -202,10 +234,20 @@ public class Main extends Bank {
             balance = input.nextInt();
         } while (balance < 0);
     }
+    private void validatePositiveNumberToChooseType() {
+        //Scanner scanner = new Scanner(System.in);
+        do {
+            System.out.print("Please enter a positive number: ");
+            while (!input.hasNextInt()) {
+                String inputt = input.next();
+                System.out.printf("\"%s\" is not a valid number.\n", inputt);
+            }
+            UserAnswerInt2 = input.nextInt();
+        } while (UserAnswerInt2 < 1 || UserAnswerInt2 > 2);
+    }
+    
     private void validateDeposit() {
         Scanner scanner = new Scanner(System.in);
-
-        
         do {
             System.out.print("Please enter a number: ");
             while (!scanner.hasNextInt() || !scanner.hasNextDouble()) {
@@ -218,8 +260,6 @@ public class Main extends Bank {
     
     private void validateWithdraw() {
         Scanner scanner = new Scanner(System.in);
-
-        
         do {
             System.out.print("Please enter a number: ");
             while ((!scanner.hasNextDouble() || !scanner.hasNextInt())) {
@@ -227,6 +267,20 @@ public class Main extends Bank {
                 System.out.printf("\"%s\" is not a valid number.\n", inputt);
             }
             UserAnswer5 = scanner.nextDouble();
+            
+        } while (!scanner.hasNextLine());
+    }
+    
+    private void validateIntAnswer() {
+        Scanner scanner = new Scanner(System.in);
+        do {
+            System.out.print("Please enter your client's account number: ");
+            while (!scanner.hasNextInt()) {
+                String inputt = scanner.next();
+                System.out.printf("\"%s\" is not a valid number.\n", inputt);
+            }
+            UserAnswerInt = scanner.nextInt();
+            
             
         } while (!scanner.hasNextLine());
     }
