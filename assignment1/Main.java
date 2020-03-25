@@ -10,7 +10,7 @@ package assignment1;
  *
  * @author Omar Mostafa 18/2/2020
  */
-public class Assignment1 {
+public class Main {
 
     /**
      * @param args the command line arguments
@@ -18,7 +18,7 @@ public class Assignment1 {
     public static void main(String[] args) {
         // TODO: code application logic here
 
-        Main ex = new Main();
+        MainMenu ex = new MainMenu();
         ex.displayMenu();
 
     }
