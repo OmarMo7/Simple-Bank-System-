@@ -1,8 +1,6 @@
 /*
  * This program is constructed, tested and compiled by 
- * Mohamed Anwar Ahmed ** ID : 20180366
- * Mohamed Mewtwally Galal ** ID : 20180234
- * Omar Mostafa Abbas ** ID : 20180182
+ * Omar Mostafa 
  */
 package assignment1;
 
