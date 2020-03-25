@@ -16,6 +16,7 @@ public class Bank {
     public ArrayList<Client> clients = new ArrayList<>();
     public ArrayList<Double> balances = new ArrayList<>();
     public ArrayList<Integer> counters = new ArrayList<>();
+    public ArrayList<String> specs = new ArrayList<>();
 
     public Bank() {
         this.name = "Egypt Bank";
@@ -24,12 +25,13 @@ public class Bank {
 
     }
 
-    public void addClient(Account account, Client client, Double balance) {
+    public void addClient(Account account, Client client, Double balance, String spec) {
         counter++;
         accounts.add(account);
         clients.add(client);
         balances.add(balance);
         counters.add(counter);
+        specs.add(spec);
     }
 
     /**
@@ -41,7 +43,7 @@ public class Bank {
 
             System.out.println(this.clients.get(i).toString());
             System.out.println("Balances: "+this.balances.get(i).toString());
-            System.out.println("Account Number: "+counters.get(i)+ "********"+ "********" +"\n");
+            System.out.println("Account Number: "+counters.get(i)+ " \n********" +"\n********\n");
         }
     }
     
@@ -56,6 +58,7 @@ public class Bank {
         } else {
             System.out.println(this.clients.get(accNumber - 1));
             System.out.println("Balance: " + balances.get(accNumber - 1));
+            System.out.println("Account Number: "+counters.get(accNumber-12)+ " \n********" +"\n********\n");
         }
     }
 /**
