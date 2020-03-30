@@ -2,6 +2,7 @@ package assignment1;
 
 /**
  *
+ * @author Mohamed Anwar 20/2/2020
  * Class Account where Client's balance and number of his account are constructed
  */
 public class Account {

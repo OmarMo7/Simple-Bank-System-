@@ -50,7 +50,7 @@ public class MainMenu extends Bank {
                 System.out.println("Enter you Client's phone: ");
                 String normalPhone = input.next();
                 System.out.println("Enter your account's balance: ");
-                validatePositiveNumber();
+                balance = validateBDW(input);
                 counter+=1;
                 Account normalAcc = new Account(balance, counter);
                 normalAcc.Speciality = "false";
@@ -72,12 +72,12 @@ public class MainMenu extends Bank {
                 System.out.println("Enter you Client's phone: ");
                 String normalSpecPhone = input.next();
                 System.out.println("Enter your account's balance: ");
-                validatePositiveNumber();
+                balance = validateBDW(input);
                 counter+=1;
-                SpecialAccount acc = new SpecialAccount(balance, counter);
-                acc.Speciality = "true";
-                Client normalcomClient = new Client(normalSpecName, nationalSpecID, normalSpecAddress, normalSpecPhone, acc);
-                myBank.addClient(acc, normalcomClient, balance,acc.Speciality);
+                SpecialAccount specialAcc = new SpecialAccount(balance, counter);
+                specialAcc.Speciality = "true";
+                Client normalcomClient = new Client(normalSpecName, nationalSpecID, normalSpecAddress, normalSpecPhone, specialAcc);
+                myBank.addClient(specialAcc, normalcomClient, balance,specialAcc.Speciality);
                 //displayTransNorm(balance, counter);
                 displayMenu();
                 break;
@@ -87,22 +87,24 @@ public class MainMenu extends Bank {
  * Display all accounts
  */
             case "3":
-                validateIntAnswer();
+                    UserAnswerInt = validatePositiveInt(input);
                 if (UserAnswerInt > myBank.counters.size()){
                 do{
                     System.out.println("Your entered account number does not exist! ");
                     System.out.println("Please try another valid one: ");
-                    validateIntAnswer();
+                    UserAnswerInt = validatePositiveInt(input);
                 } while(UserAnswerInt > myBank.counters.size());
                 }
                 existance = true;
                 balance = myBank.balances.get(UserAnswerInt-1);
                 
                 if (myBank.specs.get(UserAnswerInt-1).equals("false")){
-                    displayTransNorm(balance,UserAnswerInt);
+                    normalAcc = new Account(balance , UserAnswerInt);
+                    displayTrans(balance,UserAnswerInt,normalAcc);
                 }
-                else if (myBank.specs.get(UserAnswerInt-1).equals("true")){
-                    displayTrans(balance,UserAnswerInt);
+                else{
+                    specialAcc = new SpecialAccount(balance,UserAnswerInt);
+                    displayTrans(balance,UserAnswerInt,specialAcc);
                 }
                 break;
             case "4":
@@ -114,8 +116,8 @@ public class MainMenu extends Bank {
  */
             case "5":
                 System.out.println("Enter client's account number: ");
-                int number = input.nextInt();
-                myBank.displayClient(number);
+                
+                myBank.displayClient();
                 displayMenu();
                 break;
 /**
@@ -139,8 +141,8 @@ public class MainMenu extends Bank {
      * @param Cbalance
      * @param CaccountNumber
  */
-    public void displayTrans(double Cbalance, int CaccountNumber) {
-        SpecialAccount specialAcc = new SpecialAccount(Cbalance, CaccountNumber);
+    public void displayTrans(double Cbalance, int CaccountNumber, Account account) {
+        
       if(existance){
         
         System.out.println("Which transactions do you want to make: ");
@@ -153,17 +155,18 @@ public class MainMenu extends Bank {
             case "1":
                 {
                     System.out.println("Enter a positive amount: ");
-                    validateDeposit();
-                    balance = specialAcc.deposit(UserAnswer5);
-                    myBank.balances.add(CaccountNumber-1,balance);
+                    UserAnswer5 = validateBDW(input);
+                    balance = account.deposit(UserAnswer5);
+                    System.out.println("amount: " + myBank.balances.get(CaccountNumber-1));
+                    myBank.balances.set(CaccountNumber-1,balance);
                     break;
                 }
             case "2":
                 {
                     System.out.println("Enter amount: ");
-                    validateWithdraw();
-                    balance = specialAcc.withdraw(UserAnswer5);
-                    myBank.balances.add(CaccountNumber-1,balance);
+                    UserAnswer5 = validateBDW(input);
+                    balance = account.withdraw(UserAnswer5);
+                    myBank.balances.set(CaccountNumber-1,balance);
                     break;
                 }
             case "3":
@@ -172,117 +175,37 @@ public class MainMenu extends Bank {
                 break;
             default:
                 System.out.println("Invalid Input");
-                displayTrans(Cbalance, CaccountNumber);
+                displayTrans(Cbalance, CaccountNumber, account);
                 break;
         }
         displayMenu();
     }
-      else {validateIntAnswer();}
     }
     
-    public void displayTransNorm(double Cbalance, int CaccountNumber) {
-        Account acc = new Account(Cbalance, CaccountNumber);
-      if(existance){
-        
-        System.out.println("Which transactions do you want to make: ");
-        System.out.println("1- [Deposit]");
-        System.out.println("2- [Withdraw]");
-        System.out.println("3- [Exit]");
-        String UserAnswer3 = input.next();
-        
-        switch (UserAnswer3) {
-            case "1":
-                {
-                    System.out.println("Enter a positive amount: ");
-                    validateDeposit();
-                    balance = acc.deposit(UserAnswer5);
-                    myBank.balances.add(CaccountNumber-1,balance);
-                    break;
-                }
-            case "2":
-                {
-                    System.out.println("Enter amount: ");
-                    validateWithdraw();
-                    balance = acc.withdraw(UserAnswer5);
-                    myBank.balances.add(CaccountNumber-1,balance);
-                    break;
-                }
-            case "3":
-                System.out.println("Thank You");
-                displayMenu();
-                break;
-            default:
-                System.out.println("Invalid Input");
-                displayTransNorm(Cbalance, CaccountNumber);
-                break;
-        }
-        displayMenu();
-    }
-      else {validateIntAnswer();}
-    }
-    
-    private void validatePositiveNumber() {
-        //Scanner scanner = new Scanner(System.in);
-
-        
+    private int validatePositiveInt(Scanner scanner) {
+        int x;
         do {
             System.out.print("Please enter a positive number: ");
-            while (!input.hasNextInt() || !input.hasNextDouble()) {
-                String inputt = input.next();
+            while (!scanner.hasNextInt()) {
+                String inputt = scanner.next();
                 System.out.printf("\"%s\" is not a valid number.\n", inputt);
             }
-            balance = input.nextInt();
-        } while (balance < 0);
-    }
-    private void validatePositiveNumberToChooseType() {
-        //Scanner scanner = new Scanner(System.in);
-        do {
-            System.out.print("Please enter a positive number: ");
-            while (!input.hasNextInt()) {
-                String inputt = input.next();
-                System.out.printf("\"%s\" is not a valid number.\n", inputt);
-            }
-            UserAnswerInt2 = input.nextInt();
-        } while (UserAnswerInt2 < 1 || UserAnswerInt2 > 2);
+            x = scanner.nextInt();
+        } while (x < 0);
+        return x;
     }
     
-    private void validateDeposit() {
-        Scanner scanner = new Scanner(System.in);
+    private double validateBDW(Scanner scanner) {
+        double x;
         do {
             System.out.print("Please enter a number: ");
             while (!scanner.hasNextInt() || !scanner.hasNextDouble()) {
                 String inputt = scanner.next();
                 System.out.printf("\"%s\" is not a valid number.\n", inputt);
             }
-            UserAnswer5 = scanner.nextDouble();
-        } while (UserAnswer5 < 0);
-    }
-    
-    private void validateWithdraw() {
-        Scanner scanner = new Scanner(System.in);
-        do {
-            System.out.print("Please enter a number: ");
-            while ((!scanner.hasNextDouble() || !scanner.hasNextInt())) {
-                String inputt = scanner.next();
-                System.out.printf("\"%s\" is not a valid number.\n", inputt);
-            }
-            UserAnswer5 = scanner.nextDouble();
-            
-        } while (!scanner.hasNextLine());
-    }
-    
-    private void validateIntAnswer() {
-        Scanner scanner = new Scanner(System.in);
-        do {
-            System.out.print("Please enter your client's account number: ");
-            while (!scanner.hasNextInt()) {
-                String inputt = scanner.next();
-                System.out.printf("\"%s\" is not a valid number.\n", inputt);
-            }
-            UserAnswerInt = scanner.nextInt();
-            
-            
-        } while (!scanner.hasNextLine());
+            x = scanner.nextDouble();
+        } while (x < 0);
+        return x;
     }
 }
 
