@@ -20,20 +20,23 @@ String specialID;
 String normalAddress;
 String normalName;
 String normalPhone;
-double balance;
+String id;
+double balance = 0;
 private int counter = 0;
-int count = 0;
 int limit = 10;
-int accN = 0;
-String id =" ";
+int count = 0;
+int accN;
 
+boolean existance;
 
     public ArrayList<String> names = new ArrayList<>();
     public ArrayList<String> phones = new ArrayList<>();
     public ArrayList<String> addresses = new ArrayList<>();
     public ArrayList<String> IDs = new ArrayList<>();
+    public ArrayList<String> specs = new ArrayList<>();
     public ArrayList<Integer> accNumbers = new ArrayList<>();
     public ArrayList<Double> balances = new ArrayList<>();
+    
 
 
     void displayMenu() {
@@ -47,13 +50,14 @@ String id =" ";
         System.out.println("5- Display specifec account details");
         System.out.println("6- Exit");
 
-        String UserAnswer = input.next();
+        int UserAnswer;
+        UserAnswer = validatePositiveInt(input);
         
         switch (UserAnswer) {
 /**
- * Normal client with a normal account is added
+ * Client with a normal account is added
  */
-            case "1":
+            case 1:
                 System.out.println("Enter you Client's name: ");
                 normalName = input.next();
                 System.out.println("Enter you Client's nationalID: ");
@@ -63,11 +67,14 @@ String id =" ";
                 System.out.println("Enter you Client's phone: ");
                 normalPhone = input.next();
                 System.out.println("Enter your account's balance: ");
-                balance = input.nextDouble();
-                addClient(normalName,normalAddress,normalPhone,nationalID,balance);
+                balance = validateBDW(input);
+                addClient(normalName,normalAddress,normalPhone,nationalID,balance,"Normal");
                 displayMenu();
                 break;
-            case "2":
+/**
+ * Client with a special account is added
+ */
+            case 2:
                 System.out.println("Enter you Client's name: ");
                 normalName = input.next();
                 System.out.println("Enter you Client's specialID: ");
@@ -77,135 +84,162 @@ String id =" ";
                 System.out.println("Enter you Client's phone: ");
                 normalPhone = input.next();
                 System.out.println("Enter your account's balance: ");
-                balance = input.nextDouble();
-                addClient(normalName,normalAddress,normalPhone,specialID,balance);
+                balance = validateBDW(input);
+                addClient(normalName,normalAddress,normalPhone,specialID,balance,"Special");
                 displayMenu();
                 break;
-            case "3":
-                displayTrans(accN,id);
+            case 3:
+                
+                displayTrans();
                 break;
-            case "4":
+            case 4:
                 display();
                 displayMenu();
                 break;
-            case "5":
-                displayClient(accN);
+            case 5:
+                displayClient();
                 displayMenu();
                 break;
-            case "6":
-                System.out.println("Thank You!!! ");
-                break;
-             
+            case 6:
+                System.out.println("Thank You!!!");
+                return;
             default:
                 System.out.println("Invalid Input");
                 displayMenu();
+                break;
         }
     
     
     }
-    void checkSpeciality(){
-        
-        stringLimiter(specialID ,limit);
-        
-//    for(int i = 0; i < string.length(); i++) {    
-//            if(string.charAt(i) != ' ')    
-//                count++;    
-//            else if (string.charAt(i) == ' ')
-//                System.out.println("You have broken the rule of space! ");
-//                System.out.println("but fortunately we handled it! ");
-              
-//        }
+    
+    
+    
+    private int validatePositiveInt(Scanner scanner) {
+        int x;
+        do {
+            System.out.print("Please enter a positive number: ");
+            while (!scanner.hasNextInt()) {
+                String inputt = scanner.next();
+                System.out.printf("\"%s\" is not a valid number.\n", inputt);
+            }
+            x = scanner.nextInt();
+        } while (x < 0);
+        return x;
     }
-
-    String stringLimiter(String string , int limit){
+    
+    private double validateBDW(Scanner scanner) {
+        double x;
+        do {
+            System.out.print("Please enter a number: ");
+            while (!scanner.hasNextInt() || !scanner.hasNextDouble()) {
+                String inputt = scanner.next();
+                System.out.printf("\"%s\" is not a valid number.\n", inputt);
+            }
+            x = scanner.nextDouble();
+        } while (x < 0);
+        return x;
+    }
+    
+    
+    
+    public void displayTrans() {
+        existance = false;
+                System.out.println("Enter you Client's account number: ");
+                accN = validatePositiveInt(input);
             
-        
-                    removeAllSpaces(string);
-        
-                if (string.length() == limit){
-                    return string;
-                }
-                else{
-                    System.out.println("It seems like you have entered the wrong limit of chars!! \n");
-                    return stringLimiter(string,limit);
-                }
-     
+            if (accNumbers.contains(accN)){existance = true;}
+            else if ((!accNumbers.contains(accN)) && count == 2 ){System.out.println("****************************"); displayMenu();}
+            else {
+               System.out.println("Please check your inputs! :" );
+               count++;
+               displayTrans();
+           }
+            chooseTransaction(accN);
     }
     
-    String removeAllSpaces(String str){
-    int i=0, j;
-   for( i = 0; i < str.length(); i++) {
-      if (str.charAt(i) == ' ') {
-         for (j = i; j < str.length(); j++){
-            str.replace(str.charAt(j),str.charAt(j+1));
-
-         }
-         return removeAllSpaces(str);
-      }
-   }
-
-return str;
-}
-    
-    public void displayTrans(int accN , String id) {
-        boolean existance = false;
-        System.out.println("Enter you Client's account number: ");
-                accN = input.nextInt();
-                System.out.println("Enter you Client's nationalID: ");
-                id = input.next();
-      
-           if (accNumbers.get(accN-1) == accN && IDs.get(accN-1).equals(id) && accN <= accNumbers.size()){existance = true;}
-           else {
-               System.out.println("Please check your inputs! :" );
-               displayTrans(accN,id);
-           }
-       
-       if(existance){
+    void chooseTransaction(int accN){
+    if(existance){
         System.out.println("Which transactions do you want to make: ");
         System.out.println("1- [Deposit]");
         System.out.println("2- [Withdraw]");
         System.out.println("3- [Exit]");
-        String UserAnswer3 = input.next();
-
+        int UserAnswer3;
+        double UserAnswer5;
+        UserAnswer3 = validatePositiveInt(input);
         switch (UserAnswer3) {
-            case "1":
+            case 1:
                 {
                     System.out.println("Enter amount: ");
-                    double UserAnswer5 = input.nextDouble();
-                    balances.add(accN-1 , deposit(UserAnswer5)) ;
+                    UserAnswer5 = validateBDW(input);
+                    balances.set(accN-1 , deposit(UserAnswer5)) ;
                     displayMenu();
                     break;
                 }
-            case "2":
+            case 2:
                 {
+                    
                     System.out.println("Enter amount: ");
-                    double UserAnswer5 = input.nextDouble();
-                    balances.add(accN-1 , withdraw(UserAnswer5)) ;
+                    UserAnswer5 = validateBDW(input);
+                    if (specs.get(accN-1).equals("Normal")){
+                    balances.set(accN-1,withdraw(UserAnswer5));
+                    }else{
+                    balances.set(accN-1,specialWithdraw(UserAnswer5));
+                    }
                     displayMenu();
                     break;
                 }
-            case "3":
+            case 3:
                 System.out.println("Thank You");
                 displayMenu();
                 break;
             default:
                 System.out.println("Invalid Input");
-                displayTrans(accN , id);
+                chooseTransaction(accN);
                 break;
         }
         
        }
-       else displayMenu();
+        existance = false;
     }
     
     public double withdraw(double amount) {
 
+        balance = balances.get(accN-1);
         if (amount > balance) {
-            System.out.println("You have exceeded your balance \n");
-        } else {
+            System.out.println("\nYou have exceeded your balance");
+            System.out.println("This amount cannot be over-drafted \n");
+        }else{
             balance -= amount;
             System.out.println("Withdraw operation successful");
             System.out.println("Your Balance after withdraw: " + balance);
+        }
+        return balance;
+    }
+    /**
+     *
+     * @param amount
+     * @return
+     */
+    public double specialWithdraw(double amount){
+        balance = balances.get(accN-1);
+        if (balance != 0 && amount >  balance && amount - balance <= 1000){
+            balance -= amount;
+            System.out.println("(Over-Drafting) successful");
+            System.out.println("Your Balance: " +balance);
+        }else if (balance> amount){
+            balance -= amount;
+            System.out.println("Operation successful");
+            System.out.println("Your Balance: " + balance);
+        }else if (balance == 0 && amount <= 1000) {
+            balance -= amount;
+            System.out.println("(Over-Drafting) successful");                
+            System.out.println("Your Balance: " + balance);
+        }else if (balance ==  amount ) {
+            balance -= amount;
+            System.out.println("Operation successful");                
+            System.out.println("Your Balance: " + balance);
+        }else {
+            System.out.println("Cannot overdraft this amount.");
         }
         return balance;
     }
@@ -213,8 +247,10 @@ return str;
  *
  * Deposit function to allow user to deposit from his initialed balance
  * @param amount
+     * @return 
  */
     public double deposit(double amount) {
+        balance = balances.get(accN-1);
         balance += amount;
         System.out.println("Deposit operation successful");
         System.out.println("Your Balance after deposit: " + balance);
@@ -222,28 +258,29 @@ return str;
         return balance;
     }
     
-    public void displayClient(int accNumber) {
-            accNumber = input.nextInt();
+    public void displayClient() {
+        int accNumber;
+        System.out.println("Enter your client's account number: ");
+            accNumber = validatePositiveInt(input);
         if (accNumber - 1 > accNumbers.size()) {
             System.out.println("Unavailable input");
-            displayClient(accNumber);
-        } else {
+            displayClient();
+        }else if (!accNumbers.contains(accNumber)){
+            System.out.println("Client not found !!");
+            displayClient();
+        }else {
+            System.out.println("************************************");
             System.out.println("Name: "+names.get(accNumber-1));
             System.out.println("Address: "+addresses.get(accNumber-1));
             System.out.println("Phone: "+phones.get(accNumber-1));
             System.out.println("ID: "+IDs.get(accNumber-1));
+            System.out.println("Client Type: "+specs.get(accNumber-1)+" client");
             System.out.println("Account Number: "+accNumbers.get(accNumber-1));
             System.out.println("Balance: " + balances.get(accNumber-1).toString());
         }
     }
-   
-@Override
-    public String toString() {
     
-        return " " + balance ;
-    }
-    
-    public void addClient( String name, String address, String phone , String ID,Double balance) {
+    public void addClient( String name, String address, String phone , String ID,Double balance, String type) {
         names.add(name);
         addresses.add(address);
         phones.add(phone);
@@ -251,18 +288,24 @@ return str;
         balances.add(balance);
         counter++;
         accNumbers.add(counter);
+        specs.add(type);
     }
     
     public void display() {
-
+        System.out.println("************************************");
         for (int i = 0; i < names.size(); i++) {
-
             System.out.println("Name: "+names.get(i));
             System.out.println("Address: "+addresses.get(i));
             System.out.println("Phone: "+phones.get(i));
             System.out.println("ID: "+IDs.get(i));
+            System.out.println("Client Type: "+specs.get(i)+" client");
             System.out.println("Account Number: "+accNumbers.get(i));
-            System.out.println("Balance: " + balances.get(i).toString());
+            System.out.println("Balance: " + balances.get(i));
+            System.out.println("************************************");
+        }
+        
+        for(int i =0; i < balances.size(); i++){
+            System.out.println("Balance): " + balances.get(i));
         }
     }
     /**
